@@ -1,0 +1,31 @@
+Index: trunk/py/misc/cache.py
+===================================================================
+--- trunk/py/misc/cache.py	(revision 58575)
++++ trunk/py/misc/cache.py	(revision 58576)
+@@ -107,9 +107,6 @@
+     # time function to use for measuring build-times
+     _time = gettime
+ 
+-    def __init__(self, maxentries=64):
+-        super(BuildcostAccessCache, self).__init__(maxentries)
+-
+     def build(self, key, builder, *args, **kwargs):
+         start = self._time()
+         val = builder(*args, **kwargs)
+Index: trunk/py/misc/testing/test_cache.py
+===================================================================
+--- trunk/py/misc/testing/test_cache.py	(revision 58575)
++++ trunk/py/misc/testing/test_cache.py	(revision 58576)
+@@ -27,6 +27,12 @@
+ 
+     def test_cache_works_somewhat_simple(self):
+         cache = BuildcostAccessCache()
++        # the default ._time() call used by
++        # BuildcostAccessCache.build can 
++        # result into time()-time() == 0 which makes the below
++        # test fail randomly.  Let's rather use incrementing
++        # numbers instead. 
++        cache._time = py.std.itertools.count().next
+         for x in range(cache.maxentries):
+             y = cache.getorbuild(x, lambda: x)
+             assert x == y
