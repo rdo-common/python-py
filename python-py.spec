@@ -2,7 +2,7 @@
 
 Name:           python-py
 Version:        0.9.2
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Innovative python library containing py.test, greenlets and other niceties
 Group:          Development/Languages
 License:        MIT and LGPLv2+ and Public Domain and BSD and Python
@@ -135,6 +135,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Feb 26 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.9.2-7
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
+
 * Wed Jan 14 2009 Thomas Moschny <thomas.moschny@gmx.de> - 0.9.2-6
 - Use system doctest module again, as this wasn't the real cause of
   the test failure. Instead, remove the failing test for now.
