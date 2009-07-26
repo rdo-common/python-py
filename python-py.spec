@@ -4,7 +4,7 @@
 
 Name:           python-py
 Version:        1.0.0
-Release:        0%{?prerelease:.%{prerelease}}%{?dist}
+Release:        1%{?prerelease:.%{prerelease}}%{?dist}
 Summary:        Innovative python library containing py.test, greenlets and other niceties
 Group:          Development/Languages
 License:        MIT and LGPLv2+ and Public Domain and BSD and Python
@@ -102,6 +102,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Sun Jul 26 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0.0-1.b8
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
+
 * Wed Jul 22 2009 Thomas Moschny <thomas.moschny@gmx.de> - 1.0.0-0.b8
 - Update to 1.0.0b8.
 - Remove patches applied upstream.
