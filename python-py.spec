@@ -1,7 +1,5 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
-%define prerelease b8
-
 Name:           python-py
 Version:        1.0.0
 Release:        1%{?prerelease:.%{prerelease}}%{?dist}
@@ -86,7 +84,7 @@ find %{buildroot}%{python_sitelib} -name '*.cmd' -exec rm {} \;
 %check
 # some tests need to be skipped currently
 PYTHONPATH=$(pwd)/py %{__python} py/bin/py.test \
-  '-k-test_make_sdist_and_run_it -TestWCSvnCommandPath.test_not_versioned -TestWCSvnCommandPath.test_versioned' \
+  '-k-test_make_sdist_and_run_it' \
   py
 
 
@@ -102,6 +100,10 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Aug 13 2009 Thomas Moschny <thomas.moschny@gmx.de> - 1.0.0-1
+- Update to 1.0.0.
+- Re-enable SVN tests in %%check.
+
 * Sun Jul 26 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0.0-1.b8
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
 
