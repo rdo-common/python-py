@@ -1,7 +1,7 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-py
-Version:        1.0.0
+Version:        1.0.2
 Release:        1%{?prerelease:.%{prerelease}}%{?dist}
 Summary:        Innovative python library containing py.test, greenlets and other niceties
 Group:          Development/Languages
@@ -9,7 +9,7 @@ License:        MIT and LGPLv2+ and Public Domain and BSD and Python
 #               - main package: MIT, except:
 #                 - test/rsession/webdata/json.py: LPGLv2+
 #                 - doc/style.css: Public Domain
-#                 - test/web/post_multipart.py: Python 
+#                 - test/web/post_multipart.py: Python
 #                   (see http://code.activestate.com/help/terms)
 #                 - compat/textwrap.py: Python
 #                 - compat/subprocess.py: Python
@@ -65,27 +65,29 @@ find %{buildroot}%{python_sitelib} \( -name '*.py' -o -name 'py.*' \) \
 # move some txt files to the doc directory
 mkdir -p %{doctarget}
 mv %{buildroot}%{python_sitelib}/py/LICENSE %{doctarget}
-mv %{buildroot}%{python_sitelib}/py/compat/LICENSE %{doctarget}/compat_LICENSE
-mv %{buildroot}%{python_sitelib}/py/execnet/NOTES %{doctarget}/execnet_NOTES
-mv %{buildroot}%{python_sitelib}/py/execnet/improve-remote-tracebacks.txt \
-   %{doctarget}/execnet_improve-remote-tracebacks.txt
-mv %{buildroot}%{python_sitelib}/py/path/gateway/TODO.txt %{doctarget}/path_gateway_TODO.txt
-mv %{buildroot}%{python_sitelib}/py/path/svn/quoting.txt %{doctarget}/svn_quoting_path.txt
-cp -pr doc example contrib %{doctarget}
+# files are not in the 1.0.2 tarball, but might again be there in
+# later releases:
+#mv %{buildroot}%{python_sitelib}/py/compat/LICENSE %{doctarget}/compat_LICENSE
+#mv %{buildroot}%{python_sitelib}/py/execnet/NOTES %{doctarget}/execnet_NOTES
+#mv %{buildroot}%{python_sitelib}/py/execnet/improve-remote-tracebacks.txt \
+#   %{doctarget}/execnet_improve-remote-tracebacks.txt
+#mv %{buildroot}%{python_sitelib}/py/path/gateway/TODO.txt %{doctarget}/path_gateway_TODO.txt
+#mv %{buildroot}%{python_sitelib}/py/path/svn/quoting.txt %{doctarget}/svn_quoting_path.txt
+cp -pr README.txt doc example contrib %{doctarget}
 
 # remove this and that
 find %{buildroot}%{python_sitelib} -name '*.cmd' -exec rm {} \;
 
-# remove (most) files only used by the testsuite
+# remove (most) files only used by the testsuite - upstream plans on
+# separating that out for the 1.1 version
 #find %{buildroot}%{python_sitelib} -type d -name testing -prune -exec rm -r {} \;
 #find %{buildroot}%{python_sitelib} -name 'conftest.py*' -exec rm {} \;
 
 
 %check
-# some tests need to be skipped currently
-PYTHONPATH=$(pwd)/py %{__python} py/bin/py.test \
-  '-k-test_make_sdist_and_run_it' \
-  py
+# test cannot be run in %{buildroot}, because it uses
+# inspect.getsourcefile() et. al.
+PYTHONPATH=$(pwd)/py %{__python} py/bin/py.test py
 
 
 %clean
@@ -100,6 +102,13 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Aug 27 2009 Thomas Moschny <thomas.moschny@gmx.de> - 1.0.2-1
+- Update to 1.0.2.
+- One failing test is no longer part of the testsuite, thus needs not
+  to be skipped anymore.
+- Some developer docs are missing this time in upstream's tarfile, so
+  cannot be moved to %%{_docdir}
+
 * Thu Aug 13 2009 Thomas Moschny <thomas.moschny@gmx.de> - 1.0.0-1
 - Update to 1.0.0.
 - Re-enable SVN tests in %%check.
