@@ -1,22 +1,12 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-py
-Version:        1.0.2
+Version:        1.1.1
 Release:        1%{?prerelease:.%{prerelease}}%{?dist}
 Summary:        Innovative python library containing py.test, greenlets and other niceties
 Group:          Development/Languages
-License:        MIT and LGPLv2+ and Public Domain and BSD and Python
-#               - main package: MIT, except:
-#                 - test/rsession/webdata/json.py: LPGLv2+
-#                 - doc/style.css: Public Domain
-#                 - test/web/post_multipart.py: Python
-#                   (see http://code.activestate.com/help/terms)
-#                 - compat/textwrap.py: Python
-#                 - compat/subprocess.py: Python
-#                 - compat/doctest.py: Public Domain
-#                 - compat/optparse.py: BSD
-#               Note that all but the doctest compat files are removed
-#               in the prep stage.
+License:        MIT and Public Domain
+#               main package: MIT, except: doc/style.css: Public Domain
 URL:            http://codespeak.net/py/dist/
 Source:         http://pypi.python.org/packages/source/p/py/py-%{version}%{?prerelease}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -30,8 +20,6 @@ BuildRequires:  python-pygments
 BuildRequires:  pylint
 BuildRequires:  pexpect
 
-%define doctarget %{buildroot}%{_docdir}/%{name}-%{version}
-
 
 %description
 The py lib aims at supporting a decent development process addressing
@@ -40,13 +28,6 @@ deployment, versioning, testing and documentation perspectives.
 
 %prep
 %setup -q -n py-%{version}%{?prerelease}
-
-# remove the compatibility modules, and use system modules instead
-for module in doctest optparse textwrap subprocess ; do
-    rm py/compat/$module.py
-    echo "from $module import *" > py/compat/system_$module.py
-    sed -i py/__init__.py -e "s,compat/$module.py,compat/system_$module.py,"
-done
 
 
 %build
@@ -62,32 +43,9 @@ find %{buildroot}%{python_sitelib} \( -name '*.py' -o -name 'py.*' \) \
    -exec sed -i '1{/^#!/d}' {} \; \
    -exec chmod u=rw,go=r {} \;
 
-# move some txt files to the doc directory
-mkdir -p %{doctarget}
-mv %{buildroot}%{python_sitelib}/py/LICENSE %{doctarget}
-# files are not in the 1.0.2 tarball, but might again be there in
-# later releases:
-#mv %{buildroot}%{python_sitelib}/py/compat/LICENSE %{doctarget}/compat_LICENSE
-#mv %{buildroot}%{python_sitelib}/py/execnet/NOTES %{doctarget}/execnet_NOTES
-#mv %{buildroot}%{python_sitelib}/py/execnet/improve-remote-tracebacks.txt \
-#   %{doctarget}/execnet_improve-remote-tracebacks.txt
-#mv %{buildroot}%{python_sitelib}/py/path/gateway/TODO.txt %{doctarget}/path_gateway_TODO.txt
-#mv %{buildroot}%{python_sitelib}/py/path/svn/quoting.txt %{doctarget}/svn_quoting_path.txt
-cp -pr README.txt doc example contrib %{doctarget}
-
-# remove this and that
-find %{buildroot}%{python_sitelib} -name '*.cmd' -exec rm {} \;
-
-# remove (most) files only used by the testsuite - upstream plans on
-# separating that out for the 1.1 version
-#find %{buildroot}%{python_sitelib} -type d -name testing -prune -exec rm -r {} \;
-#find %{buildroot}%{python_sitelib} -name 'conftest.py*' -exec rm {} \;
-
 
 %check
-# test cannot be run in %{buildroot}, because it uses
-# inspect.getsourcefile() et. al.
-PYTHONPATH=$(pwd)/py %{__python} py/bin/py.test py
+%{__python} bin/py.test --report=failed,skipped
 
 
 %clean
@@ -98,10 +56,20 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %{_bindir}/py.*
 %{python_sitelib}/*
-%{_docdir}/%{name}-%{version}
+%doc CHANGELOG LICENSE README.txt
+%doc doc contrib
 
 
 %changelog
+* Sat Nov 28 2009 Thomas Moschny <thomas.moschny@gmx.de> - 1.1.1-1
+- Update to 1.1.1.
+
+* Sat Nov 21 2009 Thomas Moschny <thomas.moschny@gmx.de> - 1.1.0-1
+- Update to 1.1.0. Upstream reorganized the package's structure and
+  cleaned up the install process, so the specfile could be greatly
+  simplified.
+- Dropped licenses for files no longer present from the License tag.
+
 * Thu Aug 27 2009 Thomas Moschny <thomas.moschny@gmx.de> - 1.0.2-1
 - Update to 1.0.2.
 - One failing test is no longer part of the testsuite, thus needs not
