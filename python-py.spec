@@ -1,9 +1,9 @@
-%{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-py
-Version:        1.1.1
+Version:        1.2.0
 Release:        1%{?prerelease:.%{prerelease}}%{?dist}
-Summary:        Innovative python library containing py.test, greenlets and other niceties
+Summary:        Rapid testing (py.test) and development utils (pylib)
 Group:          Development/Languages
 License:        MIT and Public Domain
 #               main package: MIT, except: doc/style.css: Public Domain
@@ -22,8 +22,8 @@ BuildRequires:  pexpect
 
 
 %description
-The py lib aims at supporting a decent development process addressing
-deployment, versioning, testing and documentation perspectives.
+The py lib has several namespaces which help with testing, generating
+and distributing code across machines.
 
 
 %prep
@@ -61,6 +61,11 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Wed Jan 27 2010 Thomas Moschny <thomas.moschny@gmx.de> - 1.2.0-1
+- Update to 1.2.0.
+- Adjust summary and %%description.
+- Use %%global instead of %%define.
+
 * Sat Nov 28 2009 Thomas Moschny <thomas.moschny@gmx.de> - 1.1.1-1
 - Update to 1.1.1.
 
