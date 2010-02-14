@@ -1,7 +1,7 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-py
-Version:        1.2.0
+Version:        1.2.1
 Release:        1%{?prerelease:.%{prerelease}}%{?dist}
 Summary:        Rapid testing (py.test) and development utils (pylib)
 Group:          Development/Languages
@@ -61,6 +61,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Sun Feb 14 2010 Thomas Moschny <thomas.moschny@gmx.de> - 1.2.1-1
+- Update to 1.2.1.
+
 * Wed Jan 27 2010 Thomas Moschny <thomas.moschny@gmx.de> - 1.2.0-1
 - Update to 1.2.0.
 - Adjust summary and %%description.
