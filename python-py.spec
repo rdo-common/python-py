@@ -1,7 +1,7 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-py
-Version:        1.3.0
+Version:        1.3.1
 Release:        1%{?prerelease:.%{prerelease}}%{?dist}
 Summary:        Rapid testing (py.test) and development utils (pylib)
 Group:          Development/Languages
@@ -43,11 +43,6 @@ find %{buildroot}%{python_sitelib} \( -name '*.py' -o -name 'py.*' \) \
    -exec sed -i '1{/^#!/d}' {} \; \
    -exec chmod u=rw,go=r {} \;
 
-# remove some backup files
-rm -f doc/test/plugin/links.txt.orig \
-      doc/code.txt.orig \
-      doc/test/plugin/index.txt.orig
-
 
 %check
 %{__python} bin/py.test --report=failed,skipped
@@ -66,6 +61,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Sat May 29 2010 Thomas Moschny <thomas.moschny@gmx.de> - 1.3.1-1
+- Update to 1.3.1.
+
 * Sat May  8 2010 Thomas Moschny <thomas.moschny@gmx.de> - 1.3.0-1
 - Update to 1.3.0.
 - Remove some backup (.orig) files.
