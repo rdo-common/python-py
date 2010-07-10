@@ -1,7 +1,7 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-py
-Version:        1.3.1
+Version:        1.3.2
 Release:        1%{?prerelease:.%{prerelease}}%{?dist}
 Summary:        Rapid testing (py.test) and development utils (pylib)
 Group:          Development/Languages
@@ -29,6 +29,11 @@ and distributing code across machines.
 %prep
 %setup -q -n py-%{version}%{?prerelease}
 
+# remove shebangs and fix permissions
+find -type f -a \( -name '*.py' -o -name 'py.*' \) \
+   -exec sed -i '1{/^#!/d}' {} \; \
+   -exec chmod u=rw,go=r {} \;
+
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" %{__python} setup.py build
@@ -38,10 +43,8 @@ CFLAGS="$RPM_OPT_FLAGS" %{__python} setup.py build
 rm -rf %{buildroot}
 %{__python} setup.py install -O1 --skip-build --root %{buildroot}
 
-# remove shebangs and fix permissions
-find %{buildroot}%{python_sitelib} \( -name '*.py' -o -name 'py.*' \) \
-   -exec sed -i '1{/^#!/d}' {} \; \
-   -exec chmod u=rw,go=r {} \;
+# remove hidden file
+rm -f doc/.coverage
 
 
 %check
@@ -61,6 +64,11 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Sat Jul 10 2010 Thomas Moschny <thomas.moschny@gmx.de> - 1.3.2-1
+- Update to 1.3.2.
+- Do cleanups already in %%prep to avoid inconsistent mtimes between
+  source files and bytecode.
+
 * Sat May 29 2010 Thomas Moschny <thomas.moschny@gmx.de> - 1.3.1-1
 - Update to 1.3.1.
 
