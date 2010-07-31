@@ -1,8 +1,8 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-py
-Version:        1.3.2
-Release:        2%{?prerelease:.%{prerelease}}%{?dist}
+Version:        1.3.3
+Release:        1%{?prerelease:.%{prerelease}}%{?dist}
 Summary:        Rapid testing (py.test) and development utils (pylib)
 Group:          Development/Languages
 License:        MIT and Public Domain
@@ -64,6 +64,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Sat Jul 31 2010 Thomas Moschny <thomas.moschny@gmx.de> - 1.3.3-1
+- Update to 1.3.3.
+
 * Thu Jul 22 2010 David Malcolm <dmalcolm@redhat.com> - 1.3.2-2
 - Rebuilt for https://fedoraproject.org/wiki/Features/Python_2.7/MassRebuild
 
