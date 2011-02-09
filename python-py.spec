@@ -2,7 +2,7 @@
 
 Name:           python-py
 Version:        1.3.4
-Release:        1%{?prerelease:.%{prerelease}}%{?dist}
+Release:        2%{?prerelease:.%{prerelease}}%{?dist}
 Summary:        Rapid testing (py.test) and development utils (pylib)
 Group:          Development/Languages
 License:        MIT and Public Domain
@@ -65,6 +65,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Tue Feb 08 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.3.4-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
+
 * Sat Sep 18 2010 Thomas Moschny <thomas.moschny@gmx.de> - 1.3.4-1
 - Update to 1.3.4
 
