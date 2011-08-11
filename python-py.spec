@@ -24,7 +24,7 @@ BuildRequires:  python-devel
 BuildRequires:  python-setuptools
 Requires:       python-setuptools
 %if 0%{?with_docs}
-Requires:       python-sphinx
+BuildRequires:  python-sphinx
 %endif # with_docs
 %if 0%{?run_check}
 BuildRequires:  pytest >= 2.1.0
