@@ -1,31 +1,71 @@
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+%if (! 0%{?rhel}) || 0%{?rhel} > 6
+%global with_python3 1
+%global python3_version %(%{__python3} -c "import sys; sys.stdout.write(sys.version[:3])")
+%endif
+%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+
+# we have a circular (build) dependency with the (new) pytest package
+# when generating the docs or running the testsuite
+%global with_docs 0
+%global run_check 0
 
 Name:           python-py
-Version:        1.3.4
-Release:        2%{?prerelease:.%{prerelease}}%{?dist}
-Summary:        Rapid testing (py.test) and development utils (pylib)
+Version:        1.4.4
+Release:        1%{?prerelease:.%{prerelease}}%{?dist}
+Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 Group:          Development/Languages
 License:        MIT and Public Domain
 #               main package: MIT, except: doc/style.css: Public Domain
 URL:            http://codespeak.net/py/dist/
-Source:         http://pypi.python.org/packages/source/p/py/py-%{version}%{?prerelease}.tar.gz
+Source:         http://pypi.python.org/packages/source/p/py/py-%{version}%{?prerelease}.zip
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 BuildRequires:  python-devel
-BuildRequires:  python-setuptools-devel
-# needed by the testsuite:
-BuildRequires:  subversion
-BuildRequires:  python-docutils
-BuildRequires:  python-pygments
-BuildRequires:  pylint
-BuildRequires:  pexpect
+BuildRequires:  python-setuptools
 Requires:       python-setuptools
+%if 0%{?with_docs}
+Requires:       python-sphinx
+%endif # with_docs
+%if 0%{?run_check}
+BuildRequires:  pytest >= 2.1.0
+%endif # run_check
+%if 0%{?with_python3}
+BuildRequires:  python3-devel
+BuildRequires:  python3-setuptools
+Requires:       python3-setuptools
+%if 0%{?run_check}
+BuildRequires:  python3-pytest >= 2.1.0
+%endif # run_check
+%endif # with_python3
+
+# needed by the testsuite
+BuildRequires:  subversion
 
 
 %description
-The py lib has several namespaces which help with testing, generating
-and distributing code across machines.
+The py lib is a Python development support library featuring the
+following tools and modules:
 
+  * py.path: uniform local and svn path objects
+  * py.apipkg: explicit API control and lazy-importing
+  * py.iniconfig: easy parsing of .ini files
+  * py.code: dynamic code generation and introspection
+  * py.path: uniform local and svn path objects
+
+%if 0%{?with_python3}
+%package -n python3-py
+Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
+%description -n python3-py
+The py lib is a Python development support library featuring the
+following tools and modules:
+
+  * py.path: uniform local and svn path objects
+  * py.apipkg: explicit API control and lazy-importing
+  * py.iniconfig: easy parsing of .ini files
+  * py.code: dynamic code generation and introspection
+  * py.path: uniform local and svn path objects
+
+%endif # with_python3
 
 %prep
 %setup -q -n py-%{version}%{?prerelease}
@@ -35,22 +75,48 @@ find -type f -a \( -name '*.py' -o -name 'py.*' \) \
    -exec sed -i '1{/^#!/d}' {} \; \
    -exec chmod u=rw,go=r {} \;
 
+%if 0%{?with_python3}
+cp -a . %{py3dir}
+%endif # with_python3
+
 
 %build
-CFLAGS="$RPM_OPT_FLAGS" %{__python} setup.py build
+%{__python} setup.py build
+
+%if 0%{?with_docs}
+make -C doc html PYTHONPATH=$(pwd)
+%endif # with_docs
+
+%if 0%{?with_python3}
+pushd %{py3dir}
+%{__python3} setup.py build
+popd
+%endif # with_python3
 
 
 %install
 rm -rf %{buildroot}
 %{__python} setup.py install -O1 --skip-build --root %{buildroot}
 
+%if 0%{?with_python3}
+pushd %{py3dir}
+%{__python3} setup.py install -O1 --skip-build --root %{buildroot}
+popd
+%endif # with_python3
+
 # remove hidden file
-rm -f doc/.coverage
+rm -rf doc/_build/html/.buildinfo
 
 
 %check
-%{__python} bin/py.test -r fs
-
+%if 0%{?run_check}
+py.test
+%if 0%{?with_python3}
+pushd %{py3dir}
+py.test-%{python3_version}
+popd
+%endif # with_python3
+%endif # run_check
 
 %clean
 rm -rf %{buildroot}
@@ -58,13 +124,35 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%{_bindir}/py.*
-%{python_sitelib}/*
 %doc CHANGELOG LICENSE README.txt
-%doc doc contrib
+%if 0%{?with_docs}
+%doc doc/_build/html
+%endif # with_docs
+%{python_sitelib}/*
+
+
+%if 0%{?with_python3}
+%files -n python3-py
+%defattr(-,root,root,-)
+%doc CHANGELOG LICENSE README.txt
+%if 0%{?with_docs}
+%doc doc/_build/html
+%endif # with_docs
+%{python3_sitelib}/*
+%endif # with_python3
 
 
 %changelog
+* Thu Aug 11 2011 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.4-1
+- Update to 1.4.4.
+- Upstream provides a .zip archive only.
+- pytest and pycmd are separate packages now. 
+- Disable building html docs und the testsuite to break the circular
+  build dependency with pytest.
+- Update summary and description.
+- Remove BRs no longer needed.
+- Create a Python 3 subpackage.
+
 * Tue Feb 08 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.3.4-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
 
