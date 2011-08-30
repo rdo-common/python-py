@@ -6,12 +6,12 @@
 
 # we have a circular (build) dependency with the (new) pytest package
 # when generating the docs or running the testsuite
-%global with_docs 1
-%global run_check 1
+%global with_docs 0
+%global run_check 0
 
 Name:           python-py
-Version:        1.4.4
-Release:        2%{?prerelease:.%{prerelease}}%{?dist}
+Version:        1.4.5
+Release:        1%{?prerelease:.%{prerelease}}%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 Group:          Development/Languages
 License:        MIT and Public Domain
@@ -27,14 +27,14 @@ Requires:       python-setuptools
 BuildRequires:  python-sphinx
 %endif # with_docs
 %if 0%{?run_check}
-BuildRequires:  pytest >= 2.1.0
+BuildRequires:  pytest >= 2.1.1
 %endif # run_check
 %if 0%{?with_python3}
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
 Requires:       python3-setuptools
 %if 0%{?run_check}
-BuildRequires:  python3-pytest >= 2.1.0
+BuildRequires:  python3-pytest >= 2.1.1
 %endif # run_check
 %endif # with_python3
 
@@ -143,6 +143,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Sat Aug 27 2011 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.5-1
+- Update to 1.4.5.
+
 * Thu Aug 11 2011 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.4-2
 - Re-enable doc building and testsuite.
 
