@@ -11,7 +11,7 @@
 
 Name:           python-py
 Version:        1.4.5
-Release:        2%{?prerelease:.%{prerelease}}%{?dist}
+Release:        3%{?prerelease:.%{prerelease}}%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 Group:          Development/Languages
 License:        MIT and Public Domain
@@ -32,7 +32,6 @@ BuildRequires:  pytest >= 2.1.1
 %if 0%{?with_python3}
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
-Requires:       python3-setuptools
 %if 0%{?run_check}
 BuildRequires:  python3-pytest >= 2.1.1
 %endif # run_check
@@ -55,6 +54,8 @@ following tools and modules:
 %if 0%{?with_python3}
 %package -n python3-py
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
+Requires:       python3-setuptools
+
 %description -n python3-py
 The py lib is a Python development support library featuring the
 following tools and modules:
@@ -143,6 +144,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Sat Sep  3 2011 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.5-3
+- Fix: python3 dependencies.
+
 * Tue Aug 30 2011 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.5-2
 - Re-enable doc building and testsuite.
 
