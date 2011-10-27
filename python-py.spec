@@ -11,7 +11,7 @@
 
 Name:           python-py
 Version:        1.4.5
-Release:        3%{?prerelease:.%{prerelease}}%{?dist}
+Release:        4%{?prerelease:.%{prerelease}}%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 Group:          Development/Languages
 License:        MIT and Public Domain
@@ -144,6 +144,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Wed Oct 26 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.4.5-4
+- Rebuilt for glibc bug#747377
+
 * Sat Sep  3 2011 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.5-3
 - Fix: python3 dependencies.
 
