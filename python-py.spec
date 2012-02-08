@@ -6,12 +6,12 @@
 
 # we have a circular (build) dependency with the (new) pytest package
 # when generating the docs or running the testsuite
-%global with_docs 0
-%global run_check 0
+%global with_docs 1
+%global run_check 1
 
 Name:           python-py
 Version:        1.4.7
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 Group:          Development/Languages
 License:        MIT and Public Domain
@@ -144,6 +144,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Wed Feb  8 2012 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.7-2
+- Re-enable doc building and testsuite.
+
 * Wed Feb  8 2012 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.7-1
 - Update to 1.4.7.
 
