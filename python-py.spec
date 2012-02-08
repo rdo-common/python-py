@@ -6,12 +6,12 @@
 
 # we have a circular (build) dependency with the (new) pytest package
 # when generating the docs or running the testsuite
-%global with_docs 1
-%global run_check 1
+%global with_docs 0
+%global run_check 0
 
 Name:           python-py
-Version:        1.4.6
-Release:        3%{?dist}
+Version:        1.4.7
+Release:        1%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 Group:          Development/Languages
 License:        MIT and Public Domain
@@ -111,10 +111,10 @@ rm -rf doc/_build/html/.buildinfo
 
 %check
 %if 0%{?run_check}
-py.test
+py.test -r s
 %if 0%{?with_python3}
 pushd %{py3dir}
-py.test-%{python3_version}
+py.test-%{python3_version} -r s
 popd
 %endif # with_python3
 %endif # run_check
@@ -144,6 +144,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Wed Feb  8 2012 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.7-1
+- Update to 1.4.7.
+
 * Sat Jan 14 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.4.6-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
