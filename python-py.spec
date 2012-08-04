@@ -13,7 +13,7 @@
 
 Name:           python-py
 Version:        1.4.9
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 Group:          Development/Languages
 License:        MIT and Public Domain
@@ -146,6 +146,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Sat Aug 04 2012 David Malcolm <dmalcolm@redhat.com> - 1.4.9-4
+- rebuild for https://fedoraproject.org/wiki/Features/Python_3.3
+
 * Fri Jul 27 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.4.9-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
