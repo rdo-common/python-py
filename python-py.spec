@@ -1,19 +1,21 @@
-%if (! 0%{?rhel}) || 0%{?rhel} > 6
+%if 0%{?fedora} > 12
 %global with_python3 1
 %global python3_version %(%{__python3} -c "import sys; sys.stdout.write(sys.version[:3])")
 %endif
+%if 0%{?rhel} && 0%{?rhel} < 6
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%endif
 
 # we have a circular (build) dependency with the (new) pytest package
 # when generating the docs or running the testsuite
-%global with_docs 1
-%global run_check 1
+%global with_docs 0
+%global run_check 0
 
 %global pytest_version 2.2.4
 
 Name:           python-py
 Version:        1.4.9
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 Group:          Development/Languages
 License:        MIT and Public Domain
@@ -26,7 +28,11 @@ BuildRequires:  python-devel
 BuildRequires:  python-setuptools
 Requires:       python-setuptools
 %if 0%{?with_docs}
+%if 0%{?fedora}
 BuildRequires:  python-sphinx
+%else
+BuildRequires:  python-sphinx10
+%endif # fedora
 %endif # with_docs
 %if 0%{?run_check}
 BuildRequires:  pytest >= %{pytest_version}
@@ -87,7 +93,11 @@ cp -a . %{py3dir}
 %{__python} setup.py build
 
 %if 0%{?with_docs}
+%if 0%{?fedora}
 make -C doc html PYTHONPATH=$(pwd)
+%else
+make -C doc html SPHINXBUILD=sphinx-1.0-build PYTHONPATH=$(pwd)
+%endif # fedora
 %endif # with_docs
 
 %if 0%{?with_python3}
@@ -146,6 +156,10 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Oct 11 2012 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.9-7
+- Add conditional for sphinx on rhel.
+- Remove rhel logic from with_python3 conditional.
+
 * Wed Oct 10 2012 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.9-6
 - Re-enable doc building and testsuite.
 
