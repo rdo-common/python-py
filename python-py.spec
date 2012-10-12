@@ -8,14 +8,14 @@
 
 # we have a circular (build) dependency with the (new) pytest package
 # when generating the docs or running the testsuite
-%global with_docs 0
-%global run_check 0
+%global with_docs 1
+%global run_check 1
 
 %global pytest_version 2.2.4
 
 Name:           python-py
 Version:        1.4.9
-Release:        7%{?dist}
+Release:        8%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 Group:          Development/Languages
 License:        MIT and Public Domain
@@ -156,6 +156,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Fri Oct 12 2012 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.9-8
+- Re-enable doc building and testsuite.
+
 * Thu Oct 11 2012 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.9-7
 - Add conditional for sphinx on rhel.
 - Remove rhel logic from with_python3 conditional.
