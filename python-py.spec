@@ -22,6 +22,7 @@ License:        MIT and Public Domain
 #               main package: MIT, except: doc/style.css: Public Domain
 URL:            http://codespeak.net/py/dist/
 Source:         http://pypi.python.org/packages/source/p/py/py-%{version}.zip
+Patch0:         py-1.4.10-fix-test_svnauth.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 BuildRequires:  python-devel
@@ -78,6 +79,7 @@ following tools and modules:
 
 %prep
 %setup -q -n py-%{version}
+%patch0 -p1
 
 # remove shebangs and fix permissions
 find -type f -a \( -name '*.py' -o -name 'py.*' \) \
@@ -123,9 +125,13 @@ rm -rf doc/_build/html/.buildinfo
 
 %check
 %if 0%{?run_check}
+PYTHONPATH=%{buildroot}%{python_sitelib} \
+LC_ALL="en_US.UTF-8" \
 py.test -r s
 %if 0%{?with_python3}
 pushd %{py3dir}
+PYTHONPATH=%{buildroot}%{python3_sitelib} \
+LC_ALL="en_US.UTF-8" \
 py.test-%{python3_version} -r s
 popd
 %endif # with_python3
@@ -158,6 +164,7 @@ rm -rf %{buildroot}
 %changelog
 * Sun Oct 21 2012 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.10-2
 - Re-enable doc building and testsuite.
+- Minor testsuite fixes.
 
 * Sun Oct 21 2012 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.10-1
 - Update to 1.4.10.
