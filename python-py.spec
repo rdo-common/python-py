@@ -14,14 +14,14 @@
 %global pytest_version 2.3.1
 
 Name:           python-py
-Version:        1.4.12
-Release:        2%{?dist}
+Version:        1.4.13
+Release:        1%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 Group:          Development/Languages
 License:        MIT and Public Domain
 #               main package: MIT, except: doc/style.css: Public Domain
 URL:            http://codespeak.net/py/dist/
-Source:         http://pypi.python.org/packages/source/p/py/py-%{version}.zip
+Source:         http://pypi.python.org/packages/source/p/py/py-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 BuildRequires:  python-devel
@@ -160,6 +160,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Sat Mar  2 2013 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.13-1
+- Update to 1.4.13.
+
 * Thu Feb 14 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.4.12-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 
