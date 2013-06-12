@@ -28,7 +28,7 @@ BuildRequires:  python-devel
 BuildRequires:  python-setuptools
 Requires:       python-setuptools
 %if 0%{?with_docs}
-%if 0%{?fedora}
+%if 0%{?rhel} > 6 || 0%{?fedora}
 BuildRequires:  python-sphinx
 %else
 BuildRequires:  python-sphinx10
@@ -93,7 +93,7 @@ cp -a . %{py3dir}
 %{__python} setup.py build
 
 %if 0%{?with_docs}
-%if 0%{?fedora}
+%if 0%{?rhel} > 6 || 0%{?fedora}
 make -C doc html PYTHONPATH=$(pwd)
 %else
 make -C doc html SPHINXBUILD=sphinx-1.0-build PYTHONPATH=$(pwd)
@@ -161,6 +161,7 @@ rm -rf %{buildroot}
 
 %changelog
 * Wed Jun 12 2013 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.14-2
+- Use python-sphinx for rhel > 6 (rhbz#973321).
 - Fix changelog entry with an incorrect date (rhbz#973325).
 
 * Sat May 11 2013 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.14-1
