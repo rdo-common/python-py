@@ -15,7 +15,7 @@
 
 Name:           python-py
 Version:        1.4.14
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 Group:          Development/Languages
 License:        MIT and Public Domain
@@ -160,6 +160,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Wed Jun 12 2013 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.14-2
+- Fix changelog entry with an incorrect date (rhbz#973325).
+
 * Sat May 11 2013 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.14-1
 - Update to 1.4.14.
 
@@ -352,5 +355,5 @@ rm -rf %{buildroot}
 - Remove %%{srcname} macro.
 - More detailed information about licenses.
 
-* Wed Aug 21 2008 Thomas Moschny <thomas.moschny@gmx.de> - 0.9.1-1
+* Thu Aug 21 2008 Thomas Moschny <thomas.moschny@gmx.de> - 0.9.1-1
 - New package.
