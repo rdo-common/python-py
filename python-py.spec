@@ -20,7 +20,7 @@ Summary:        Library with cross-python path, ini-parsing, io, code, log facil
 Group:          Development/Languages
 License:        MIT and Public Domain
 #               main package: MIT, except: doc/style.css: Public Domain
-URL:            http://codespeak.net/py/dist/
+URL:            http://pylib.readthedocs.org/
 Source:         http://pypi.python.org/packages/source/p/py/py-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
@@ -162,6 +162,7 @@ rm -rf %{buildroot}
 %changelog
 * Wed Jun 12 2013 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.14-2
 - Use python-sphinx for rhel > 6 (rhbz#973321).
+- Update URL.
 - Fix changelog entry with an incorrect date (rhbz#973325).
 
 * Sat May 11 2013 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.14-1
