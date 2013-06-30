@@ -14,8 +14,8 @@
 %global pytest_version 2.3.1
 
 Name:           python-py
-Version:        1.4.14
-Release:        2%{?dist}
+Version:        1.4.15
+Release:        1%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 Group:          Development/Languages
 License:        MIT and Public Domain
@@ -160,6 +160,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Sun Jun 30 2013 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.15-1
+- Update to 1.4.15.
+
 * Wed Jun 12 2013 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.14-2
 - Use python-sphinx for rhel > 6 (rhbz#973321).
 - Update URL.
