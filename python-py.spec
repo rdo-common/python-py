@@ -14,7 +14,7 @@
 %global pytest_version 2.3.1
 
 Name:           python-py
-Version:        1.4.16
+Version:        1.4.17
 Release:        1%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 Group:          Development/Languages
@@ -161,6 +161,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Fri Oct  4 2013 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.17-1
+- Update to 1.4.17.
+
 * Thu Oct  3 2013 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.16-1
 - Update to 1.4.16.
 
