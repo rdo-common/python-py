@@ -15,7 +15,7 @@
 
 Name:           python-py
 Version:        1.4.17
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 Group:          Development/Languages
 License:        MIT and Public Domain
@@ -126,12 +126,12 @@ rm -rf doc/_build/html/.buildinfo
 %if 0%{?run_check}
 PYTHONPATH=%{buildroot}%{python_sitelib} \
 LC_ALL="en_US.UTF-8" \
-py.test -r s -k"-TestWCSvnCommandPath"
+py.test -r s -k"-TestWCSvnCommandPath" testing
 %if 0%{?with_python3}
 pushd %{py3dir}
 PYTHONPATH=%{buildroot}%{python3_sitelib} \
 LC_ALL="en_US.UTF-8" \
-py.test-%{python3_version} -r s -k"-TestWCSvnCommandPath"
+py.test-%{python3_version} -r s -k"-TestWCSvnCommandPath" testing
 popd
 %endif # with_python3
 %endif # run_check
@@ -161,6 +161,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Mon Oct  7 2013 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.17-2
+- Only run tests from the 'testing' subdir in %%check.
+
 * Fri Oct  4 2013 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.17-1
 - Update to 1.4.17.
 
