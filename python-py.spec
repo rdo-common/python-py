@@ -14,8 +14,8 @@
 %global pytest_version 2.3.1
 
 Name:           python-py
-Version:        1.4.17
-Release:        2%{?dist}
+Version:        1.4.18
+Release:        1%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 Group:          Development/Languages
 License:        MIT and Public Domain
@@ -161,6 +161,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Sun Nov 10 2013 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.18-1
+- Update to 1.4.18.
+
 * Mon Oct  7 2013 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.17-2
 - Only run tests from the 'testing' subdir in %%check.
 
