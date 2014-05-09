@@ -9,13 +9,13 @@
 # we have a circular (build) dependency with the (new) pytest package
 # when generating the docs or running the testsuite
 %global with_docs 1
-%global run_check 1
+%global run_check 0
 
 %global pytest_version 2.5
 
 Name:           python-py
 Version:        1.4.20
-Release:        2%{?dist}
+Release:        2%{?dist}.1
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 Group:          Development/Languages
 License:        MIT and Public Domain
@@ -161,6 +161,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Fri May 09 2014 Dennis Gilmore <dennis@ausil.us> - 1.4.20-2.1
+- rebuild for python 3.4 disable tests for circular deps
+
 * Fri Apr 18 2014 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.20-2
 - Re-enable doc building and testsuite.
 
