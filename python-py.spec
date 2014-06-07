@@ -15,7 +15,7 @@
 
 Name:           python-py
 Version:        1.4.20
-Release:        2%{?dist}.1
+Release:        3%{?dist}.1
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 Group:          Development/Languages
 License:        MIT and Public Domain
@@ -161,6 +161,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.4.20-3.1
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
 * Fri May 09 2014 Dennis Gilmore <dennis@ausil.us> - 1.4.20-2.1
 - rebuild for python 3.4 disable tests for circular deps
 
