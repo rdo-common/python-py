@@ -9,13 +9,13 @@
 # we have a circular (build) dependency with the (new) pytest package
 # when generating the docs or running the testsuite
 %global with_docs 1
-%global run_check 0
+%global run_check 1
 
 %global pytest_version 2.5
 
 Name:           python-py
-Version:        1.4.20
-Release:        3%{?dist}.1
+Version:        1.4.21
+Release:        1%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 Group:          Development/Languages
 License:        MIT and Public Domain
@@ -161,6 +161,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Fri Jul 18 2014 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.21-1
+- Update to 1.4.21.
+
 * Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.4.20-3.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
 
