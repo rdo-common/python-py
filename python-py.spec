@@ -14,8 +14,8 @@
 %global pytest_version 2.5
 
 Name:           python-py
-Version:        1.4.22
-Release:        2%{?dist}
+Version:        1.4.23
+Release:        1%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 Group:          Development/Languages
 License:        MIT and Public Domain
@@ -161,6 +161,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Wed Aug  6 2014 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.23-1
+- Update to 1.4.23.
+
 * Fri Aug  1 2014 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.22-2
 - Re-enable doc building and testsuite.
 
