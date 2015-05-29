@@ -1,9 +1,10 @@
+%if 0%{?rhel} && 0%{?rhel} <= 6
+%{!?__python2: %global __python2 /usr/bin/python2}
+%{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%endif
+
 %if 0%{?fedora}
 %global with_python3 1
-%global python3_version %(%{__python3} -c "import sys; sys.stdout.write(sys.version[:3])")
-%endif
-%if 0%{?rhel} && 0%{?rhel} < 6
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
 %endif
 
 # we have a circular (build) dependency with the (new) pytest package
@@ -14,8 +15,8 @@
 %global pytest_version 2.5
 
 Name:           python-py
-Version:        1.4.26
-Release:        2%{?dist}
+Version:        1.4.28
+Release:        1%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 Group:          Development/Languages
 License:        MIT and Public Domain
@@ -24,7 +25,7 @@ URL:            http://pylib.readthedocs.org/
 Source:         http://pypi.python.org/packages/source/p/py/py-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
-BuildRequires:  python-devel
+BuildRequires:  python2-devel
 BuildRequires:  python-setuptools
 Requires:       python-setuptools
 %if 0%{?with_docs}
@@ -77,20 +78,27 @@ following tools and modules:
 %endif # with_python3
 
 %prep
-%setup -q -n py-%{version}
+%setup -qc -n py-%{version}
+mv py-%{version} python2
 
+pushd python2
 # remove shebangs and fix permissions
 find -type f -a \( -name '*.py' -o -name 'py.*' \) \
    -exec sed -i '1{/^#!/d}' {} \; \
    -exec chmod u=rw,go=r {} \;
 
+# fix line-endings
+sed -i 's/\r//' README.txt
+popd
+
 %if 0%{?with_python3}
-cp -a . %{py3dir}
+cp -a python2 python3
 %endif # with_python3
 
 
 %build
-%{__python} setup.py build
+pushd python2
+%{__python2} setup.py build
 
 %if 0%{?with_docs}
 %if 0%{?rhel} > 6 || 0%{?fedora}
@@ -99,36 +107,41 @@ make -C doc html PYTHONPATH=$(pwd)
 make -C doc html SPHINXBUILD=sphinx-1.0-build PYTHONPATH=$(pwd)
 %endif # fedora
 %endif # with_docs
+popd
 
 %if 0%{?with_python3}
-pushd %{py3dir}
+pushd python3
 %{__python3} setup.py build
 popd
 %endif # with_python3
 
 
 %install
-rm -rf %{buildroot}
-%{__python} setup.py install -O1 --skip-build --root %{buildroot}
-
-%if 0%{?with_python3}
-pushd %{py3dir}
-%{__python3} setup.py install -O1 --skip-build --root %{buildroot}
-popd
-%endif # with_python3
+pushd python2
+%{__python2} setup.py install -O1 --skip-build --root %{buildroot}
 
 # remove hidden file
 rm -rf doc/_build/html/.buildinfo
+popd
+
+%if 0%{?with_python3}
+pushd python3
+%{__python3} setup.py install -O1 --skip-build --root %{buildroot}
+popd
+%endif # with_python3
 
 
 %check
 # disable failing Subversion checks for now
 %if 0%{?run_check}
-PYTHONPATH=%{buildroot}%{python_sitelib} \
+pushd python2
+PYTHONPATH=%{buildroot}%{python2_sitelib} \
 LC_ALL="en_US.UTF-8" \
 py.test -r s -k"-TestWCSvnCommandPath" testing
+popd
+
 %if 0%{?with_python3}
-pushd %{py3dir}
+pushd python3
 PYTHONPATH=%{buildroot}%{python3_sitelib} \
 LC_ALL="en_US.UTF-8" \
 py.test-%{python3_version} -r s -k"-TestWCSvnCommandPath" testing
@@ -136,31 +149,45 @@ popd
 %endif # with_python3
 %endif # run_check
 
-%clean
-rm -rf %{buildroot}
-
 
 %files
-%defattr(-,root,root,-)
-%doc CHANGELOG LICENSE README.txt
+%doc python2/CHANGELOG
+%doc python2/README.txt
+%if 0%{?_licensedir:1}
+%license python2/LICENSE
+%else
+%doc python2/LICENSE
+%endif # licensedir
 %if 0%{?with_docs}
-%doc doc/_build/html
+%doc python2/doc/_build/html
 %endif # with_docs
-%{python_sitelib}/*
+%{python2_sitelib}/*
 
 
 %if 0%{?with_python3}
 %files -n python3-py
-%defattr(-,root,root,-)
-%doc CHANGELOG LICENSE README.txt
+%doc python3/CHANGELOG
+%doc python3/README.txt
+%if 0%{?_licensedir:1}
+%license python2/LICENSE
+%else
+%doc python2/LICENSE
+%endif # licensedir
 %if 0%{?with_docs}
-%doc doc/_build/html
+# HTML docs generated with Python2 for now
+%doc python2/doc/_build/html
 %endif # with_docs
 %{python3_sitelib}/*
 %endif # with_python3
 
 
 %changelog
+* Fri May 29 2015 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.28-1
+- Update to 1.4.28.
+- Modernize spec file.
+- Apply updates Python packaging guidelines.
+- Mark LICENSE with %%license.
+
 * Sat Dec  6 2014 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.26-2
 - Re-enable doc building and testsuite.
 
