@@ -16,7 +16,7 @@
 
 Name:           python-py
 Version:        1.4.28
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 Group:          Development/Languages
 License:        MIT and Public Domain
@@ -182,6 +182,9 @@ popd
 
 
 %changelog
+* Thu Jun 18 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.4.28-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Fri May 29 2015 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.28-1
 - Update to 1.4.28.
 - Modernize spec file.
