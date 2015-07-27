@@ -15,7 +15,7 @@
 %global pytest_version 2.5
 
 Name:           python-py
-Version:        1.4.29
+Version:        1.4.30
 Release:        1%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 Group:          Development/Languages
@@ -182,6 +182,9 @@ popd
 
 
 %changelog
+* Mon Jul 27 2015 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.30-1
+- Update to 1.4.30.
+
 * Thu Jun 25 2015 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.29-1
 - Update to 1.4.29.
 
