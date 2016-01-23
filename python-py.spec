@@ -1,7 +1,7 @@
 # we have a circular (build) dependency with the (new) pytest package
 # when generating the docs or running the testsuite
-%global with_docs 0
-%global run_check 0
+%global with_docs 1
+%global run_check 1
 
 %global pytest_version 2.5
 
@@ -9,7 +9,7 @@
 
 Name:           python-%{srcname}
 Version:        1.4.31
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 License:        MIT and Public Domain
 #               main package: MIT, except: doc/style.css: Public Domain
@@ -160,6 +160,9 @@ popd
 
 
 %changelog
+* Sat Jan 23 2016 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.31-2
+- Re-enable checks and docs.
+
 * Sat Jan 23 2016 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.31-1
 - Update to 1.4.31.
 - Follow updated Python packaging guidelines.
