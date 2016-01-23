@@ -1,54 +1,35 @@
-%if 0%{?rhel} && 0%{?rhel} <= 6
-%{!?__python2: %global __python2 /usr/bin/python2}
-%{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
-%endif
-
-%if 0%{?fedora}
-%global with_python3 1
-%endif
-
 # we have a circular (build) dependency with the (new) pytest package
 # when generating the docs or running the testsuite
-%global with_docs 1
-%global run_check 1
+%global with_docs 0
+%global run_check 0
 
 %global pytest_version 2.5
 
-Name:           python-py
-Version:        1.4.30
-Release:        3%{?dist}
+%global srcname py
+
+Name:           python-%{srcname}
+Version:        1.4.31
+Release:        1%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
-Group:          Development/Languages
 License:        MIT and Public Domain
 #               main package: MIT, except: doc/style.css: Public Domain
 URL:            http://pylib.readthedocs.org/
-Source:         http://pypi.python.org/packages/source/p/py/py-%{version}.tar.gz
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Source:         http://pypi.python.org/packages/source/p/%{srcname}/%{srcname}-%{version}.tar.gz
 BuildArch:      noarch
 BuildRequires:  python2-devel
-BuildRequires:  python-setuptools
-Requires:       python-setuptools
+BuildRequires:  python3-devel
+BuildRequires:  python2-setuptools
+BuildRequires:  python3-setuptools
+
 %if 0%{?with_docs}
-%if 0%{?rhel} > 6 || 0%{?fedora}
 BuildRequires:  python-sphinx
-%else
-BuildRequires:  python-sphinx10
-%endif # fedora
 %endif # with_docs
 %if 0%{?run_check}
-BuildRequires:  pytest >= %{pytest_version}
-%endif # run_check
-%if 0%{?with_python3}
-BuildRequires:  python3-devel
-BuildRequires:  python3-setuptools
-%if 0%{?run_check}
+BuildRequires:  python2-pytest >= %{pytest_version}
 BuildRequires:  python3-pytest >= %{pytest_version}
 %endif # run_check
-%endif # with_python3
-
 # needed by the testsuite
 BuildRequires:  subversion
-
 
 %description
 The py lib is a Python development support library featuring the
@@ -60,12 +41,15 @@ following tools and modules:
   * py.code: dynamic code generation and introspection
   * py.path: uniform local and svn path objects
 
-%if 0%{?with_python3}
-%package -n python3-py
-Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
-Requires:       python3-setuptools
 
-%description -n python3-py
+%package -n python2-%{srcname}
+Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
+Requires:       python-setuptools
+%{?python_provide:%python_provide python2-%{srcname}}
+Provides:       bundled(python-apipkg) = 1.3.dev
+Provides:       bundled(python2-apipkg) = 1.3.dev
+
+%description -n python2-%{srcname}
 The py lib is a Python development support library featuring the
 following tools and modules:
 
@@ -75,13 +59,27 @@ following tools and modules:
   * py.code: dynamic code generation and introspection
   * py.path: uniform local and svn path objects
 
-%endif # with_python3
+
+%package -n python3-%{srcname}
+Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
+Requires:       python3-setuptools
+%{?python_provide:%python_provide python3-%{srcname}}
+Provides:       bundled(python3-apipkg) = 1.3.dev
+
+%description -n python3-%{srcname}
+The py lib is a Python development support library featuring the
+following tools and modules:
+
+  * py.path: uniform local and svn path objects
+  * py.apipkg: explicit API control and lazy-importing
+  * py.iniconfig: easy parsing of .ini files
+  * py.code: dynamic code generation and introspection
+  * py.path: uniform local and svn path objects
+
 
 %prep
-%setup -qc -n py-%{version}
-mv py-%{version} python2
-
-pushd python2
+%setup -qc -n %{srcname}-%{version}
+pushd %{srcname}-%{version}
 # remove shebangs and fix permissions
 find -type f -a \( -name '*.py' -o -name 'py.*' \) \
    -exec sed -i '1{/^#!/d}' {} \; \
@@ -90,45 +88,38 @@ find -type f -a \( -name '*.py' -o -name 'py.*' \) \
 # fix line-endings
 sed -i 's/\r//' README.txt
 popd
-
-%if 0%{?with_python3}
+mv %{srcname}-%{version} python2
 cp -a python2 python3
-%endif # with_python3
 
 
 %build
 pushd python2
-%{__python2} setup.py build
-
+%py2_build
 %if 0%{?with_docs}
-%if 0%{?rhel} > 6 || 0%{?fedora}
 make -C doc html PYTHONPATH=$(pwd)
-%else
-make -C doc html SPHINXBUILD=sphinx-1.0-build PYTHONPATH=$(pwd)
-%endif # fedora
 %endif # with_docs
 popd
 
-%if 0%{?with_python3}
 pushd python3
-%{__python3} setup.py build
+%py3_build
+%if 0%{?with_docs}
+make -C doc html PYTHONPATH=$(pwd)
+%endif # with_docs
 popd
-%endif # with_python3
 
 
 %install
 pushd python2
-%{__python2} setup.py install -O1 --skip-build --root %{buildroot}
-
+%py2_install
 # remove hidden file
 rm -rf doc/_build/html/.buildinfo
 popd
 
-%if 0%{?with_python3}
 pushd python3
-%{__python3} setup.py install -O1 --skip-build --root %{buildroot}
+%py3_install
+# remove hidden file
+rm -rf doc/_build/html/.buildinfo
 popd
-%endif # with_python3
 
 
 %check
@@ -137,51 +128,43 @@ popd
 pushd python2
 PYTHONPATH=%{buildroot}%{python2_sitelib} \
 LC_ALL="en_US.UTF-8" \
-py.test -r s -k"-TestWCSvnCommandPath" testing
+py.test-%{python2_version} -r s -k"-TestWCSvnCommandPath" testing
 popd
 
-%if 0%{?with_python3}
 pushd python3
 PYTHONPATH=%{buildroot}%{python3_sitelib} \
 LC_ALL="en_US.UTF-8" \
 py.test-%{python3_version} -r s -k"-TestWCSvnCommandPath" testing
 popd
-%endif # with_python3
 %endif # run_check
 
 
-%files
+%files -n python2-%{srcname}
 %doc python2/CHANGELOG
 %doc python2/README.txt
-%if 0%{?_licensedir:1}
 %license python2/LICENSE
-%else
-%doc python2/LICENSE
-%endif # licensedir
 %if 0%{?with_docs}
 %doc python2/doc/_build/html
 %endif # with_docs
 %{python2_sitelib}/*
 
 
-%if 0%{?with_python3}
-%files -n python3-py
+%files -n python3-%{srcname}
 %doc python3/CHANGELOG
 %doc python3/README.txt
-%if 0%{?_licensedir:1}
 %license python2/LICENSE
-%else
-%doc python2/LICENSE
-%endif # licensedir
 %if 0%{?with_docs}
-# HTML docs generated with Python2 for now
-%doc python2/doc/_build/html
+%doc python3/doc/_build/html
 %endif # with_docs
 %{python3_sitelib}/*
-%endif # with_python3
 
 
 %changelog
+* Sat Jan 23 2016 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.31-1
+- Update to 1.4.31.
+- Follow updated Python packaging guidelines.
+- Add Provides tag for bundled apipkg.
+
 * Wed Oct 14 2015 Robert Kuska <rkuska@redhat.com> - 1.4.30-3
 - Rebuilt for Python3.5 rebuild
 - With check and docs
