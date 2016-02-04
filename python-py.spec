@@ -9,7 +9,7 @@
 
 Name:           python-%{srcname}
 Version:        1.4.31
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 License:        MIT and Public Domain
 #               main package: MIT, except: doc/style.css: Public Domain
@@ -160,6 +160,9 @@ popd
 
 
 %changelog
+* Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 1.4.31-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
 * Sat Jan 23 2016 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.31-2
 - Re-enable checks and docs.
 
