@@ -1,7 +1,7 @@
 # we have a circular (build) dependency with the (new) pytest package
 # when generating the docs or running the testsuite
 %global with_docs 1
-%global run_check 1
+%global run_check 0
 
 %global pytest_version 2.5
 
@@ -9,7 +9,7 @@
 
 Name:           python-%{srcname}
 Version:        1.4.31
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 License:        MIT and Public Domain
 #               main package: MIT, except: doc/style.css: Public Domain
@@ -160,6 +160,10 @@ popd
 
 
 %changelog
+* Fri Dec 09 2016 Charalampos Stratakis <cstratak@redhat.com> - 1.4.31-5
+- Rebuild for Python 3.6
+- Disable tests
+
 * Tue Jul 19 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.4.31-4
 - https://fedoraproject.org/wiki/Changes/Automatic_Provides_for_Python_RPM_Packages
 
