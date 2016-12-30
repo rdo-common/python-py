@@ -8,13 +8,13 @@
 %global srcname py
 
 Name:           python-%{srcname}
-Version:        1.4.31
-Release:        5%{?dist}
+Version:        1.4.32
+Release:        1%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 License:        MIT and Public Domain
 #               main package: MIT, except: doc/style.css: Public Domain
-URL:            http://pylib.readthedocs.org/
-Source:         http://pypi.python.org/packages/source/p/%{srcname}/%{srcname}-%{version}.tar.gz
+URL:            http://pylib.readthedocs.io/en/stable/
+Source:         https://files.pythonhosted.org/packages/source/p/%{srcname}/%{srcname}-%{version}.tar.gz
 BuildArch:      noarch
 BuildRequires:  python2-devel
 BuildRequires:  python3-devel
@@ -85,8 +85,6 @@ find -type f -a \( -name '*.py' -o -name 'py.*' \) \
    -exec sed -i '1{/^#!/d}' {} \; \
    -exec chmod u=rw,go=r {} \;
 
-# fix line-endings
-sed -i 's/\r//' README.txt
 popd
 mv %{srcname}-%{version} python2
 cp -a python2 python3
@@ -141,7 +139,7 @@ popd
 
 %files -n python2-%{srcname}
 %doc python2/CHANGELOG
-%doc python2/README.txt
+%doc python2/README.rst
 %license python2/LICENSE
 %if 0%{?with_docs}
 %doc python2/doc/_build/html
@@ -151,7 +149,7 @@ popd
 
 %files -n python3-%{srcname}
 %doc python3/CHANGELOG
-%doc python3/README.txt
+%doc python3/README.rst
 %license python2/LICENSE
 %if 0%{?with_docs}
 %doc python3/doc/_build/html
@@ -160,6 +158,9 @@ popd
 
 
 %changelog
+* Thu Dec 29 2016 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.32-1
+- Update to 1.4.32.
+
 * Fri Dec 09 2016 Charalampos Stratakis <cstratak@redhat.com> - 1.4.31-5
 - Rebuild for Python 3.6
 - Disable tests
