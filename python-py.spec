@@ -1,15 +1,20 @@
 # we have a circular (build) dependency with the (new) pytest package
 # when generating the docs or running the testsuite
 %global with_docs 1
-%global run_check 0
+# the testsuite is curremtly not compatible with pytest 3, see
+# https://github.com/pytest-dev/py/issues/104
+%if 0%{fedora} < 26
+%global run_check 1
+%endif
 
-%global pytest_version 2.5
+%global pytest_version_lb 2.9.0
+%global pytest_version_ub 2.10
 
 %global srcname py
 
 Name:           python-%{srcname}
 Version:        1.4.32
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 License:        MIT and Public Domain
 #               main package: MIT, except: doc/style.css: Public Domain
@@ -25,8 +30,8 @@ BuildRequires:  python3-setuptools
 BuildRequires:  python-sphinx
 %endif # with_docs
 %if 0%{?run_check}
-BuildRequires:  python2-pytest >= %{pytest_version}
-BuildRequires:  python3-pytest >= %{pytest_version}
+BuildRequires:  python2-pytest >= %{pytest_version_lb}, python2-pytest < %{pytest_version_ub}
+BuildRequires:  python3-pytest >= %{pytest_version_lb}, python3-pytest < %{pytest_version_ub}
 %endif # run_check
 # needed by the testsuite
 BuildRequires:  subversion
@@ -158,6 +163,9 @@ popd
 
 
 %changelog
+* Fri Dec 30 2016 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.32-2
+- Enable tests for Fedora<26.
+
 * Thu Dec 29 2016 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.32-1
 - Update to 1.4.32.
 
