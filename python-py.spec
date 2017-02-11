@@ -14,7 +14,7 @@
 
 Name:           python-%{srcname}
 Version:        1.4.32
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 License:        MIT and Public Domain
 #               main package: MIT, except: doc/style.css: Public Domain
@@ -163,6 +163,9 @@ popd
 
 
 %changelog
+* Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.4.32-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
+
 * Fri Dec 30 2016 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.32-2
 - Enable tests for Fedora<26.
 
