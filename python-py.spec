@@ -3,14 +3,16 @@
 %global with_docs 1
 # the testsuite is curremtly not compatible with pytest 3, see
 # https://github.com/pytest-dev/py/issues/104
-%if 0%{fedora} < 26
-%global run_check 1
-%endif
+%global run_check 0
 
 %global pytest_version_lb 2.9.0
 %global pytest_version_ub 2.10
 
 %global srcname py
+
+%if 0%{?fedora}
+%global with_python3 1
+%endif
 
 Name:           python-%{srcname}
 Version:        1.4.34
@@ -22,16 +24,12 @@ URL:            http://pylib.readthedocs.io/en/stable/
 Source:         https://files.pythonhosted.org/packages/source/p/%{srcname}/%{srcname}-%{version}.tar.gz
 BuildArch:      noarch
 BuildRequires:  python2-devel
-BuildRequires:  python3-devel
-BuildRequires:  python2-setuptools
-BuildRequires:  python3-setuptools
-
+BuildRequires:  python-setuptools
 %if 0%{?with_docs}
 BuildRequires:  python-sphinx
 %endif # with_docs
 %if 0%{?run_check}
 BuildRequires:  python2-pytest >= %{pytest_version_lb}, python2-pytest < %{pytest_version_ub}
-BuildRequires:  python3-pytest >= %{pytest_version_lb}, python3-pytest < %{pytest_version_ub}
 %endif # run_check
 # needed by the testsuite
 BuildRequires:  subversion
@@ -65,8 +63,14 @@ following tools and modules:
   * py.path: uniform local and svn path objects
 
 
+%if 0%{?with_python3}
 %package -n python3-%{srcname}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
+BuildRequires:  python3-devel
+BuildRequires:  python3-setuptools
+%if 0%{?run_check}
+BuildRequires:  python3-pytest >= %{pytest_version_lb}, python3-pytest < %{pytest_version_ub}
+%endif # run_check
 Requires:       python3-setuptools
 %{?python_provide:%python_provide python3-%{srcname}}
 Provides:       bundled(python3-apipkg) = 1.3.dev
@@ -80,6 +84,7 @@ following tools and modules:
   * py.iniconfig: easy parsing of .ini files
   * py.code: dynamic code generation and introspection
   * py.path: uniform local and svn path objects
+%endif
 
 
 %prep
@@ -92,7 +97,9 @@ find -type f -a \( -name '*.py' -o -name 'py.*' \) \
 
 popd
 mv %{srcname}-%{version} python2
+%if 0%{?with_python3}
 cp -a python2 python3
+%endif
 
 
 %build
@@ -103,12 +110,14 @@ make -C doc html PYTHONPATH=$(pwd)
 %endif # with_docs
 popd
 
+%if 0%{?with_python3}
 pushd python3
 %py3_build
 %if 0%{?with_docs}
 make -C doc html PYTHONPATH=$(pwd)
 %endif # with_docs
 popd
+%endif
 
 
 %install
@@ -118,11 +127,13 @@ pushd python2
 rm -rf doc/_build/html/.buildinfo
 popd
 
+%if 0%{?with_python3}
 pushd python3
 %py3_install
 # remove hidden file
 rm -rf doc/_build/html/.buildinfo
 popd
+%endif
 
 
 %check
@@ -134,11 +145,13 @@ LC_ALL="en_US.UTF-8" \
 py.test-%{python2_version} -r s -k"-TestWCSvnCommandPath" testing
 popd
 
+%if 0%{?with_python3}
 pushd python3
 PYTHONPATH=%{buildroot}%{python3_sitelib} \
 LC_ALL="en_US.UTF-8" \
 py.test-%{python3_version} -r s -k"-TestWCSvnCommandPath" testing
 popd
+%endif
 %endif # run_check
 
 
@@ -152,6 +165,7 @@ popd
 %{python2_sitelib}/*
 
 
+%if 0%{?with_python3}
 %files -n python3-%{srcname}
 %doc python3/CHANGELOG
 %doc python3/README.rst
@@ -160,6 +174,7 @@ popd
 %doc python3/doc/_build/html
 %endif # with_docs
 %{python3_sitelib}/*
+%endif
 
 
 %changelog
