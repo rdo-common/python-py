@@ -13,8 +13,8 @@
 %global srcname py
 
 Name:           python-%{srcname}
-Version:        1.4.32
-Release:        3%{?dist}
+Version:        1.4.33
+Release:        1%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 License:        MIT and Public Domain
 #               main package: MIT, except: doc/style.css: Public Domain
@@ -163,6 +163,9 @@ popd
 
 
 %changelog
+* Sun Mar 19 2017 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.33-1
+- Update to 1.4.33.
+
 * Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.4.32-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
