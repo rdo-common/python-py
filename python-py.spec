@@ -13,7 +13,7 @@
 %global srcname py
 
 Name:           python-%{srcname}
-Version:        1.4.33
+Version:        1.4.34
 Release:        1%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 License:        MIT and Public Domain
@@ -163,6 +163,9 @@ popd
 
 
 %changelog
+* Mon Jun  5 2017 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.34-1
+- Update to 1.4.34.
+
 * Sun Mar 19 2017 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.33-1
 - Update to 1.4.33.
 
