@@ -14,7 +14,7 @@
 
 Name:           python-%{srcname}
 Version:        1.4.34
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 License:        MIT and Public Domain
 #               main package: MIT, except: doc/style.css: Public Domain
@@ -163,6 +163,9 @@ popd
 
 
 %changelog
+* Thu Jul 27 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.4.34-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
+
 * Mon Jun  5 2017 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.34-1
 - Update to 1.4.34.
 
