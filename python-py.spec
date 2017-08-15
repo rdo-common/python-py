@@ -1,11 +1,16 @@
 # we have a circular (build) dependency with the (new) pytest package
 # when generating the docs or running the testsuite
-%global with_docs 1
+%bcond_without docs
 # the testsuite is curremtly not compatible with pytest 3, see
 # https://github.com/pytest-dev/py/issues/104
-%if 0%{fedora} < 26
-%global run_check 1
+%if ! 0%{fedora} < 26
+%global _without_tests 1
 %endif
+%bcond_without tests
+
+%bcond_without python2
+%bcond_without python3
+%bcond_without platform_python
 
 %global pytest_version_lb 2.9.0
 %global pytest_version_ub 2.10
@@ -14,25 +19,47 @@
 
 Name:           python-%{srcname}
 Version:        1.4.34
-Release:        2%{?dist}
+Release:        4%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 License:        MIT and Public Domain
 #               main package: MIT, except: doc/style.css: Public Domain
 URL:            http://pylib.readthedocs.io/en/stable/
 Source:         https://files.pythonhosted.org/packages/source/p/%{srcname}/%{srcname}-%{version}.tar.gz
 BuildArch:      noarch
-BuildRequires:  python2-devel
-BuildRequires:  python3-devel
-BuildRequires:  python2-setuptools
-BuildRequires:  python3-setuptools
 
-%if 0%{?with_docs}
+%if %{with python2}
+BuildRequires:  python2-devel
+BuildRequires:  python2-setuptools
+%if %{with docs}
 BuildRequires:  python-sphinx
 %endif # with_docs
-%if 0%{?run_check}
+%endif
+
+%if %{with python3}
+BuildRequires:  python3-devel
+BuildRequires:  python3-setuptools
+%if %{with docs}
+BuildRequires:  python3-sphinx
+%endif # with_docs
+%endif
+
+%if %{with platform_python}
+BuildRequires:  platform-python-devel
+BuildRequires:  platform-python-setuptools
+%endif
+
+
+%if %{with tests}
+%if %{with python2}
 BuildRequires:  python2-pytest >= %{pytest_version_lb}, python2-pytest < %{pytest_version_ub}
+%endif
+%if %{with python3}
 BuildRequires:  python3-pytest >= %{pytest_version_lb}, python3-pytest < %{pytest_version_ub}
-%endif # run_check
+%endif
+%if %{with platform_python}
+BuildRequires:  platform-python-pytest >= %{pytest_version_lb}, platform-python-pytest < %{pytest_version_ub}
+%endif
+%endif # with tests
 # needed by the testsuite
 BuildRequires:  subversion
 
@@ -46,7 +73,7 @@ following tools and modules:
   * py.code: dynamic code generation and introspection
   * py.path: uniform local and svn path objects
 
-
+%if %{with python2}
 %package -n python2-%{srcname}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 Requires:       python-setuptools
@@ -64,7 +91,9 @@ following tools and modules:
   * py.code: dynamic code generation and introspection
   * py.path: uniform local and svn path objects
 
+%endif
 
+%if %{with python3}
 %package -n python3-%{srcname}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 Requires:       python3-setuptools
@@ -81,6 +110,26 @@ following tools and modules:
   * py.code: dynamic code generation and introspection
   * py.path: uniform local and svn path objects
 
+%endif
+
+%if %{with platform_python}
+%package -n platform-python-%{srcname}
+Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
+Requires:       platform-python-setuptools
+Provides:       bundled(python3-apipkg) = 1.3.dev
+
+%description -n platform-python-%{srcname}
+The py lib is a Python development support library featuring the
+following tools and modules:
+
+  * py.path: uniform local and svn path objects
+  * py.apipkg: explicit API control and lazy-importing
+  * py.iniconfig: easy parsing of .ini files
+  * py.code: dynamic code generation and introspection
+  * py.path: uniform local and svn path objects
+
+%endif
+
 
 %prep
 %setup -qc -n %{srcname}-%{version}
@@ -93,76 +142,130 @@ find -type f -a \( -name '*.py' -o -name 'py.*' \) \
 popd
 mv %{srcname}-%{version} python2
 cp -a python2 python3
+cp -a python2 platform_python
 
 
 %build
+%if %{with python2}
 pushd python2
 %py2_build
-%if 0%{?with_docs}
+
+%if %{with docs}
 make -C doc html PYTHONPATH=$(pwd)
 %endif # with_docs
 popd
 
+%endif
+
+%if %{with python3}
 pushd python3
 %py3_build
-%if 0%{?with_docs}
-make -C doc html PYTHONPATH=$(pwd)
+
+%if %{with docs}
+make -C doc html PYTHONPATH=$(pwd) SPHINXBUILD=sphinx-build-3
 %endif # with_docs
 popd
+%endif
+
+%if %{with platform_python}
+pushd platform_python
+%platform_py_build
+popd
+%endif
 
 
 %install
+%if %{with python2}
 pushd python2
 %py2_install
 # remove hidden file
 rm -rf doc/_build/html/.buildinfo
 popd
+%endif
 
+%if %{with python3}
 pushd python3
 %py3_install
 # remove hidden file
 rm -rf doc/_build/html/.buildinfo
 popd
+%endif
+
+%if %{with platform_python}
+pushd python3
+%platform_py_install
+popd
+%endif
 
 
 %check
+%if %{with tests}
+
+%if %{with python2}
 # disable failing Subversion checks for now
-%if 0%{?run_check}
 pushd python2
 PYTHONPATH=%{buildroot}%{python2_sitelib} \
 LC_ALL="en_US.UTF-8" \
 py.test-%{python2_version} -r s -k"-TestWCSvnCommandPath" testing
 popd
+%endif
 
+%if %{with python3}
 pushd python3
 PYTHONPATH=%{buildroot}%{python3_sitelib} \
 LC_ALL="en_US.UTF-8" \
 py.test-%{python3_version} -r s -k"-TestWCSvnCommandPath" testing
 popd
-%endif # run_check
+%endif
+
+%if %{with platform_python}
+pushd platform_python
+PYTHONPATH=%{buildroot}%{platform_python_sitelib} \
+LC_ALL="en_US.UTF-8" \
+%{__platform_python} -m py.test -r s -k"-TestWCSvnCommandPath" testing
+popd
+%endif
+
+%endif # with tests
 
 
+%if %{with python2}
 %files -n python2-%{srcname}
 %doc python2/CHANGELOG
 %doc python2/README.rst
 %license python2/LICENSE
-%if 0%{?with_docs}
+%if %{with docs}
 %doc python2/doc/_build/html
 %endif # with_docs
 %{python2_sitelib}/*
+%endif
 
-
+%if %{with python3}
 %files -n python3-%{srcname}
 %doc python3/CHANGELOG
 %doc python3/README.rst
-%license python2/LICENSE
-%if 0%{?with_docs}
+%license python3/LICENSE
+%if %{with docs}
 %doc python3/doc/_build/html
 %endif # with_docs
 %{python3_sitelib}/*
+%endif
 
+%if %{with platform_python}
+%files -n platform-python-%{srcname}
+%doc platform_python/CHANGELOG
+%doc platform_python/README.rst
+%license platform_python/LICENSE
+%{platform_python_sitelib}/*
+%endif
 
 %changelog
+* Fri Aug 11 2017 Tomas Orsava <torsava@redhat.com> - 1.4.34-4
+- Switch with_docs and run_test macros to bcond_without docs, tests
+
+* Thu Aug 10 2017 Tomas Orsava <torsava@redhat.com> - 1.4.34-3
+- Added the platform-python subpackage
+
 * Thu Jul 27 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.4.34-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
 
