@@ -3,7 +3,7 @@
 %bcond_without docs
 # the testsuite is curremtly not compatible with pytest 3, see
 # https://github.com/pytest-dev/py/issues/104
-%if ! 0%{fedora} < 26
+%if 0%{?fedora} >= 26 || 0%{?rhel} > 7
 %global _without_tests 1
 %endif
 %bcond_without tests
@@ -19,7 +19,7 @@
 
 Name:           python-%{srcname}
 Version:        1.4.34
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 License:        MIT and Public Domain
 #               main package: MIT, except: doc/style.css: Public Domain
@@ -260,6 +260,9 @@ popd
 %endif
 
 %changelog
+* Tue Sep 05 2017 Troy Dawson <tdawson@redhat.com> - 1.4.34-5
+- Cleanup spec file conditionals
+
 * Fri Aug 11 2017 Tomas Orsava <torsava@redhat.com> - 1.4.34-4
 - Switch with_docs and run_test macros to bcond_without docs, tests
 
