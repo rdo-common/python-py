@@ -10,7 +10,6 @@
 
 %bcond_without python2
 %bcond_without python3
-%bcond_without platform_python
 
 %global pytest_version_lb 2.9.0
 %global pytest_version_ub 2.10
@@ -19,7 +18,7 @@
 
 Name:           python-%{srcname}
 Version:        1.4.34
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 License:        MIT and Public Domain
 #               main package: MIT, except: doc/style.css: Public Domain
@@ -43,21 +42,12 @@ BuildRequires:  python3-sphinx
 %endif # with_docs
 %endif
 
-%if %{with platform_python}
-BuildRequires:  platform-python-devel
-BuildRequires:  platform-python-setuptools
-%endif
-
-
 %if %{with tests}
 %if %{with python2}
 BuildRequires:  python2-pytest >= %{pytest_version_lb}, python2-pytest < %{pytest_version_ub}
 %endif
 %if %{with python3}
 BuildRequires:  python3-pytest >= %{pytest_version_lb}, python3-pytest < %{pytest_version_ub}
-%endif
-%if %{with platform_python}
-BuildRequires:  platform-python-pytest >= %{pytest_version_lb}, platform-python-pytest < %{pytest_version_ub}
 %endif
 %endif # with tests
 # needed by the testsuite
@@ -99,6 +89,7 @@ Summary:        Library with cross-python path, ini-parsing, io, code, log facil
 Requires:       python3-setuptools
 %{?python_provide:%python_provide python3-%{srcname}}
 Provides:       bundled(python3-apipkg) = 1.3.dev
+Obsoletes:      platform-python-%{srcname} < 1.4.34-6
 
 %description -n python3-%{srcname}
 The py lib is a Python development support library featuring the
@@ -112,25 +103,6 @@ following tools and modules:
 
 %endif
 
-%if %{with platform_python}
-%package -n platform-python-%{srcname}
-Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
-Requires:       platform-python-setuptools
-Provides:       bundled(python3-apipkg) = 1.3.dev
-
-%description -n platform-python-%{srcname}
-The py lib is a Python development support library featuring the
-following tools and modules:
-
-  * py.path: uniform local and svn path objects
-  * py.apipkg: explicit API control and lazy-importing
-  * py.iniconfig: easy parsing of .ini files
-  * py.code: dynamic code generation and introspection
-  * py.path: uniform local and svn path objects
-
-%endif
-
-
 %prep
 %setup -qc -n %{srcname}-%{version}
 pushd %{srcname}-%{version}
@@ -142,7 +114,6 @@ find -type f -a \( -name '*.py' -o -name 'py.*' \) \
 popd
 mv %{srcname}-%{version} python2
 cp -a python2 python3
-cp -a python2 platform_python
 
 
 %build
@@ -167,13 +138,6 @@ make -C doc html PYTHONPATH=$(pwd) SPHINXBUILD=sphinx-build-3
 popd
 %endif
 
-%if %{with platform_python}
-pushd platform_python
-%platform_py_build
-popd
-%endif
-
-
 %install
 %if %{with python2}
 pushd python2
@@ -190,13 +154,6 @@ pushd python3
 rm -rf doc/_build/html/.buildinfo
 popd
 %endif
-
-%if %{with platform_python}
-pushd python3
-%platform_py_install
-popd
-%endif
-
 
 %check
 %if %{with tests}
@@ -218,16 +175,7 @@ py.test-%{python3_version} -r s -k"-TestWCSvnCommandPath" testing
 popd
 %endif
 
-%if %{with platform_python}
-pushd platform_python
-PYTHONPATH=%{buildroot}%{platform_python_sitelib} \
-LC_ALL="en_US.UTF-8" \
-%{__platform_python} -m py.test -r s -k"-TestWCSvnCommandPath" testing
-popd
-%endif
-
 %endif # with tests
-
 
 %if %{with python2}
 %files -n python2-%{srcname}
@@ -251,15 +199,10 @@ popd
 %{python3_sitelib}/*
 %endif
 
-%if %{with platform_python}
-%files -n platform-python-%{srcname}
-%doc platform_python/CHANGELOG
-%doc platform_python/README.rst
-%license platform_python/LICENSE
-%{platform_python_sitelib}/*
-%endif
-
 %changelog
+* Fri Nov 03 2017 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 1.4.34-6
+- Remove platform-python subpackage
+
 * Tue Sep 05 2017 Troy Dawson <tdawson@redhat.com> - 1.4.34-5
 - Cleanup spec file conditionals
 
