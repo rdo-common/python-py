@@ -26,32 +26,10 @@ URL:            http://pylib.readthedocs.io/en/stable/
 Source:         https://files.pythonhosted.org/packages/source/p/%{srcname}/%{srcname}-%{version}.tar.gz
 BuildArch:      noarch
 
-%if %{with python2}
-BuildRequires:  python2-devel
-BuildRequires:  python2-setuptools
-%if %{with docs}
-BuildRequires:  python-sphinx
-%endif # with_docs
-%endif
-
-%if %{with python3}
-BuildRequires:  python3-devel
-BuildRequires:  python3-setuptools
-%if %{with docs}
-BuildRequires:  python3-sphinx
-%endif # with_docs
-%endif
-
 %if %{with tests}
-%if %{with python2}
-BuildRequires:  python2-pytest >= %{pytest_version_lb}, python2-pytest < %{pytest_version_ub}
-%endif
-%if %{with python3}
-BuildRequires:  python3-pytest >= %{pytest_version_lb}, python3-pytest < %{pytest_version_ub}
-%endif
-%endif # with tests
 # needed by the testsuite
 BuildRequires:  subversion
+%endif # with tests
 
 %description
 The py lib is a Python development support library featuring the
@@ -66,6 +44,14 @@ following tools and modules:
 %if %{with python2}
 %package -n python2-%{srcname}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
+BuildRequires:  python2-devel
+BuildRequires:  python2-setuptools
+%if %{with docs}
+BuildRequires:  python-sphinx
+%endif # with_docs
+%if %{with tests}
+BuildRequires:  python2-pytest >= %{pytest_version_lb}, python2-pytest < %{pytest_version_ub}
+%endif # with tests
 Requires:       python-setuptools
 %{?python_provide:%python_provide python2-%{srcname}}
 Provides:       bundled(python-apipkg) = 1.3.dev
@@ -86,6 +72,14 @@ following tools and modules:
 %if %{with python3}
 %package -n python3-%{srcname}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
+BuildRequires:  python3-devel
+BuildRequires:  python3-setuptools
+%if %{with docs}
+BuildRequires:  python3-sphinx
+%endif # with_docs
+%if %{with tests}
+BuildRequires:  python3-pytest >= %{pytest_version_lb}, python3-pytest < %{pytest_version_ub}
+%endif # with tests
 Requires:       python3-setuptools
 %{?python_provide:%python_provide python3-%{srcname}}
 Provides:       bundled(python3-apipkg) = 1.3.dev
