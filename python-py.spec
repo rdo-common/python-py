@@ -141,7 +141,8 @@ py.test-%{python3_version} -r s -k"-TestWCSvnCommandPath" testing
 %if %{with docs}
 %doc doc/_build-2/html
 %endif # with_docs
-%{python2_sitelib}/*
+%{python2_sitelib}/py-*.egg-info/
+%{python2_sitelib}/py/
 
 %files -n python3-%{srcname}
 %doc CHANGELOG
@@ -150,7 +151,8 @@ py.test-%{python3_version} -r s -k"-TestWCSvnCommandPath" testing
 %if %{with docs}
 %doc doc/_build-3/html
 %endif # with_docs
-%{python3_sitelib}/*
+%{python3_sitelib}/py-*.egg-info/
+%{python3_sitelib}/py/
 
 %changelog
 * Fri Nov 03 2017 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 1.4.34-6
