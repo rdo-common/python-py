@@ -47,7 +47,7 @@ Summary:        Library with cross-python path, ini-parsing, io, code, log facil
 BuildRequires:  python2-devel
 BuildRequires:  python2-setuptools
 %if %{with docs}
-BuildRequires:  python-sphinx
+BuildRequires:  %{_bindir}/sphinx-build-2
 %endif # with_docs
 %if %{with tests}
 BuildRequires:  python2-pytest >= %{pytest_version_lb}, python2-pytest < %{pytest_version_ub}
@@ -75,7 +75,7 @@ Summary:        Library with cross-python path, ini-parsing, io, code, log facil
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
 %if %{with docs}
-BuildRequires:  python3-sphinx
+BuildRequires:  %{_bindir}/sphinx-build-3
 %endif # with_docs
 %if %{with tests}
 BuildRequires:  python3-pytest >= %{pytest_version_lb}, python3-pytest < %{pytest_version_ub}
@@ -98,100 +98,59 @@ following tools and modules:
 %endif
 
 %prep
-%setup -qc -n %{srcname}-%{version}
-pushd %{srcname}-%{version}
+%autosetup -n %{srcname}-%{version}
 # remove shebangs and fix permissions
 find -type f -a \( -name '*.py' -o -name 'py.*' \) \
    -exec sed -i '1{/^#!/d}' {} \; \
    -exec chmod u=rw,go=r {} \;
 
-popd
-mv %{srcname}-%{version} python2
-cp -a python2 python3
-
-
 %build
-%if %{with python2}
-pushd python2
 %py2_build
-
-%if %{with docs}
-make -C doc html PYTHONPATH=$(pwd)
-%endif # with_docs
-popd
-
-%endif
-
-%if %{with python3}
-pushd python3
 %py3_build
-
 %if %{with docs}
-make -C doc html PYTHONPATH=$(pwd) SPHINXBUILD=sphinx-build-3
-%endif # with_docs
+export PYTHONPATH=$(pwd)
+pushd doc
+  sphinx-build-2 -b html -d _build-2/doctrees . _build-2/html
+  sphinx-build-3 -b html -d _build-3/doctrees . _build-3/html
 popd
-%endif
+%endif # with_docs
 
 %install
-%if %{with python2}
-pushd python2
 %py2_install
-# remove hidden file
-rm -rf doc/_build/html/.buildinfo
-popd
-%endif
-
-%if %{with python3}
-pushd python3
 %py3_install
 # remove hidden file
 rm -rf doc/_build/html/.buildinfo
-popd
-%endif
 
 %check
 %if %{with tests}
 
-%if %{with python2}
 # disable failing Subversion checks for now
-pushd python2
 PYTHONPATH=%{buildroot}%{python2_sitelib} \
 LC_ALL="en_US.UTF-8" \
 py.test-%{python2_version} -r s -k"-TestWCSvnCommandPath" testing
-popd
-%endif
-
-%if %{with python3}
-pushd python3
 PYTHONPATH=%{buildroot}%{python3_sitelib} \
 LC_ALL="en_US.UTF-8" \
 py.test-%{python3_version} -r s -k"-TestWCSvnCommandPath" testing
-popd
-%endif
 
 %endif # with tests
 
-%if %{with python2}
 %files -n python2-%{srcname}
-%doc python2/CHANGELOG
-%doc python2/README.rst
-%license python2/LICENSE
+%doc CHANGELOG
+%doc README.rst
+%license LICENSE
 %if %{with docs}
-%doc python2/doc/_build/html
+%doc doc/_build-2/html
 %endif # with_docs
 %{python2_sitelib}/*
-%endif
 
-%if %{with python3}
 %files -n python3-%{srcname}
-%doc python3/CHANGELOG
-%doc python3/README.rst
-%license python3/LICENSE
+%doc CHANGELOG
+%doc README.rst
+%license LICENSE
 %if %{with docs}
-%doc python3/doc/_build/html
+%doc doc/_build-3/html
 %endif # with_docs
 %{python3_sitelib}/*
-%endif
 
 %changelog
 * Fri Nov 03 2017 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 1.4.34-6
