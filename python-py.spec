@@ -18,7 +18,7 @@
 
 Name:           python-%{srcname}
 Version:        1.4.34
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 License:        MIT and Public Domain
 #               main package: MIT, except: doc/style.css: Public Domain
@@ -83,7 +83,7 @@ BuildRequires:  python3-pytest >= %{pytest_version_lb}, python3-pytest < %{pytes
 Requires:       python3-setuptools
 %{?python_provide:%python_provide python3-%{srcname}}
 Provides:       bundled(python3-apipkg) = 1.3.dev
-Obsoletes:      platform-python-%{srcname} < 1.4.34-6
+Obsoletes:      platform-python-%{srcname} < %{version}-%{release}
 
 %description -n python3-%{srcname}
 The py lib is a Python development support library featuring the
@@ -155,6 +155,9 @@ py.test-%{python3_version} -r s -k"-TestWCSvnCommandPath" testing
 %{python3_sitelib}/py/
 
 %changelog
+* Tue Nov 07 2017 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 1.4.34-7
+- Use better Obsoletes for platform-python
+
 * Fri Nov 03 2017 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 1.4.34-6
 - Remove platform-python subpackage
 
