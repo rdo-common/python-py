@@ -18,8 +18,8 @@
 %global srcname py
 
 Name:           python-%{srcname}
-Version:        1.4.34
-Release:        8%{?dist}
+Version:        1.5.1
+Release:        1%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 License:        MIT and Public Domain
 #               main package: MIT, except: doc/style.css: Public Domain
@@ -56,8 +56,8 @@ BuildRequires:  python2-pytest >= %{pytest_version_lb}, python2-pytest < %{pytes
 %endif # with tests
 Requires:       python-setuptools
 %{?python_provide:%python_provide python2-%{srcname}}
-Provides:       bundled(python-apipkg) = 1.3.dev
-Provides:       bundled(python2-apipkg) = 1.3.dev
+Provides:       bundled(python2-apipkg) = 1.4
+Provides:       bundled(python2-iniconfig) = 1.0.0
 
 %description -n python2-%{srcname}
 The py lib is a Python development support library featuring the
@@ -85,7 +85,8 @@ BuildRequires:  python3-pytest >= %{pytest_version_lb}, python3-pytest < %{pytes
 %endif # with tests
 Requires:       python3-setuptools
 %{?python_provide:%python_provide python3-%{srcname}}
-Provides:       bundled(python3-apipkg) = 1.3.dev
+Provides:       bundled(python3-apipkg) = 1.4
+Provides:       bundled(python3-iniconfig) = 1.0.0
 Obsoletes:      platform-python-%{srcname} < %{version}-%{release}
 
 %description -n python3-%{srcname}
@@ -181,7 +182,7 @@ popd
 %doc python2/README.rst
 %license python2/LICENSE
 %if %{with docs}
-%doc python2/doc/_build
+%doc python2/doc/_build/html
 %endif # with_docs
 %{python2_sitelib}/py-*.egg-info/
 %{python2_sitelib}/py/
@@ -194,7 +195,7 @@ popd
 %doc python3/README.rst
 %license python3/LICENSE
 %if %{with docs}
-%doc python3/doc/_build
+%doc python3/doc/_build/html
 %endif # with_docs
 %{python3_sitelib}/py-*.egg-info/
 %{python3_sitelib}/py/
@@ -202,6 +203,11 @@ popd
 
 
 %changelog
+* Wed Nov 15 2017 Thomas Moschny <thomas.moschny@gmx.de> - 1.5.1-1
+- Update to 1.5.1.
+- Update list of vendored packages.
+- Fix HTML doc path.
+
 * Wed Nov 15 2017 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.34-8
 - Restore earlier structure of the spec file, also fixing previously
   introduced problems.
