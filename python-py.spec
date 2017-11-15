@@ -4,9 +4,10 @@
 # the testsuite is curremtly not compatible with pytest 3, see
 # https://github.com/pytest-dev/py/issues/104
 %if 0%{?fedora} >= 26 || 0%{?rhel} > 7
-%global _without_tests 1
-%endif
+%bcond_with tests
+%else
 %bcond_without tests
+%endif
 
 %bcond_without python2
 %bcond_without python3
@@ -18,7 +19,7 @@
 
 Name:           python-%{srcname}
 Version:        1.4.34
-Release:        7%{?dist}
+Release:        8%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 License:        MIT and Public Domain
 #               main package: MIT, except: doc/style.css: Public Domain
@@ -40,6 +41,7 @@ following tools and modules:
   * py.iniconfig: easy parsing of .ini files
   * py.code: dynamic code generation and introspection
   * py.path: uniform local and svn path objects
+
 
 %if %{with python2}
 %package -n python2-%{srcname}
@@ -67,7 +69,8 @@ following tools and modules:
   * py.code: dynamic code generation and introspection
   * py.path: uniform local and svn path objects
 
-%endif
+%endif # with python2
+
 
 %if %{with python3}
 %package -n python3-%{srcname}
@@ -95,66 +98,114 @@ following tools and modules:
   * py.code: dynamic code generation and introspection
   * py.path: uniform local and svn path objects
 
-%endif
+%endif # with python3
+
 
 %prep
-%autosetup -n %{srcname}-%{version}
+%setup -qc -n %{srcname}-%{version}
+
 # remove shebangs and fix permissions
-find -type f -a \( -name '*.py' -o -name 'py.*' \) \
+find %{srcname}-%{version} \
+   -type f -a \( -name '*.py' -o -name 'py.*' \) \
    -exec sed -i '1{/^#!/d}' {} \; \
    -exec chmod u=rw,go=r {} \;
 
+mv %{srcname}-%{version} python2
+cp -a python2 python3
+
+
 %build
+%if %{with python2}
+pushd python2
 %py2_build
+%if %{with docs}
+make -C doc html PYTHONPATH=$(pwd) SPHINXBUILD=sphinx-build-2
+%endif # with docs
+popd
+%endif # with python2
+
+%if %{with python3}
+pushd python3
 %py3_build
 %if %{with docs}
-export PYTHONPATH=$(pwd)
-pushd doc
-  sphinx-build-2 -b html -d _build-2/doctrees . _build-2/html
-  sphinx-build-3 -b html -d _build-3/doctrees . _build-3/html
+make -C doc html PYTHONPATH=$(pwd) SPHINXBUILD=sphinx-build-3
+%endif # with docs
 popd
-%endif # with_docs
+%endif # with python3
+
 
 %install
+%if %{with python2}
+pushd python2
 %py2_install
+# remove hidden file
+rm -rf doc/_build/html/.buildinfo
+popd
+%endif # with python2
+
+%if %{with python3}
+pushd python3
 %py3_install
 # remove hidden file
 rm -rf doc/_build/html/.buildinfo
+popd
+%endif # with python3
+
 
 %check
 %if %{with tests}
-
 # disable failing Subversion checks for now
+
+%if %{with python2}
+pushd python2
 PYTHONPATH=%{buildroot}%{python2_sitelib} \
 LC_ALL="en_US.UTF-8" \
 py.test-%{python2_version} -r s -k"-TestWCSvnCommandPath" testing
+popd
+%endif # with python2
+
+%if %{with python3}
+pushd python3
 PYTHONPATH=%{buildroot}%{python3_sitelib} \
 LC_ALL="en_US.UTF-8" \
 py.test-%{python3_version} -r s -k"-TestWCSvnCommandPath" testing
+popd
+%endif # with python3
 
 %endif # with tests
 
+
+%if %{with python2}
 %files -n python2-%{srcname}
-%doc CHANGELOG
-%doc README.rst
-%license LICENSE
+%doc python2/CHANGELOG
+%doc python2/README.rst
+%license python2/LICENSE
 %if %{with docs}
-%doc doc/_build-2/html
+%doc python2/doc/_build
 %endif # with_docs
 %{python2_sitelib}/py-*.egg-info/
 %{python2_sitelib}/py/
+%endif # with python2
 
+
+%if %{with python3}
 %files -n python3-%{srcname}
-%doc CHANGELOG
-%doc README.rst
-%license LICENSE
+%doc python3/CHANGELOG
+%doc python3/README.rst
+%license python3/LICENSE
 %if %{with docs}
-%doc doc/_build-3/html
+%doc python3/doc/_build
 %endif # with_docs
 %{python3_sitelib}/py-*.egg-info/
 %{python3_sitelib}/py/
+%endif # with python3
+
 
 %changelog
+* Wed Nov 15 2017 Thomas Moschny <thomas.moschny@gmx.de> - 1.4.34-8
+- Restore earlier structure of the spec file, also fixing previously
+  introduced problems.
+
 * Tue Nov 07 2017 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 1.4.34-7
 - Use better Obsoletes for platform-python
 
