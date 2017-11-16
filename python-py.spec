@@ -18,7 +18,7 @@
 %global srcname py
 
 Name:           python-%{srcname}
-Version:        1.5.1
+Version:        1.5.2
 Release:        1%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 License:        MIT and Public Domain
@@ -203,6 +203,9 @@ popd
 
 
 %changelog
+* Thu Nov 16 2017 Thomas Moschny <thomas.moschny@gmx.de> - 1.5.2-1
+- Update to 1.5.2.
+
 * Wed Nov 15 2017 Thomas Moschny <thomas.moschny@gmx.de> - 1.5.1-1
 - Update to 1.5.1.
 - Update list of vendored packages.
