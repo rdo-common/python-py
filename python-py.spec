@@ -19,7 +19,7 @@
 
 Name:           python-%{srcname}
 Version:        1.5.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 License:        MIT and Public Domain
 #               main package: MIT, except: doc/style.css: Public Domain
@@ -203,6 +203,9 @@ popd
 
 
 %changelog
+* Fri Feb 09 2018 Fedora Release Engineering <releng@fedoraproject.org> - 1.5.2-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
+
 * Thu Nov 16 2017 Thomas Moschny <thomas.moschny@gmx.de> - 1.5.2-1
 - Update to 1.5.2.
 
