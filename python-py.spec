@@ -19,7 +19,7 @@
 
 Name:           python-%{srcname}
 Version:        1.5.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 License:        MIT and Public Domain
 #               main package: MIT, except: doc/style.css: Public Domain
@@ -54,7 +54,7 @@ BuildRequires:  %{_bindir}/sphinx-build-2
 %if %{with tests}
 BuildRequires:  python2-pytest >= %{pytest_version_lb}, python2-pytest < %{pytest_version_ub}
 %endif # with tests
-Requires:       python-setuptools
+Requires:       python2-setuptools
 %{?python_provide:%python_provide python2-%{srcname}}
 Provides:       bundled(python2-apipkg) = 1.4
 Provides:       bundled(python2-iniconfig) = 1.0.0
@@ -203,6 +203,10 @@ popd
 
 
 %changelog
+* Mon Feb 12 2018 Iryna Shcherbina <ishcherb@redhat.com> - 1.5.2-3
+- Update Python 2 dependency declarations to new packaging standards
+  (See https://fedoraproject.org/wiki/FinalizingFedoraSwitchtoPython3)
+
 * Fri Feb 09 2018 Fedora Release Engineering <releng@fedoraproject.org> - 1.5.2-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 
