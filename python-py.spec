@@ -18,8 +18,8 @@
 %global srcname py
 
 Name:           python-%{srcname}
-Version:        1.5.2
-Release:        3%{?dist}
+Version:        1.5.3
+Release:        1%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 License:        MIT and Public Domain
 #               main package: MIT, except: doc/style.css: Public Domain
@@ -203,6 +203,9 @@ popd
 
 
 %changelog
+* Thu Mar 22 2018 Thomas Moschny <thomas.moschny@gmx.de> - 1.5.3-1
+- Update to 1.5.3.
+
 * Mon Feb 12 2018 Iryna Shcherbina <ishcherb@redhat.com> - 1.5.2-3
 - Update Python 2 dependency declarations to new packaging standards
   (See https://fedoraproject.org/wiki/FinalizingFedoraSwitchtoPython3)
