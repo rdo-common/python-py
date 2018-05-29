@@ -3,14 +3,15 @@
 %bcond_without docs
 # the testsuite is curremtly not compatible with pytest 3, see
 # https://github.com/pytest-dev/py/issues/104
-%if 0%{?fedora} >= 26 || 0%{?rhel} > 7
+%if 0%{?fedora} >= 26 || 0%{?rhel} > 7 || 0%{?centos} >= 7
 %bcond_with tests
+%bcond_with python3
 %else
 %bcond_without tests
+%bcond_without python3
 %endif
 
 %bcond_without python2
-%bcond_without python3
 
 %global pytest_version_lb 2.9.0
 %global pytest_version_ub 2.10
