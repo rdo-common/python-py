@@ -3,7 +3,7 @@
 %bcond_without docs
 # the testsuite is curremtly not compatible with pytest 3, see
 # https://github.com/pytest-dev/py/issues/104
-%if 0%{?fedora} >= 26 || 0%{?rhel} > 7 || 0%{?centos} >= 7
+%if 0%{?fedora} >= 26 || 0%{?rhel} >= 7
 %bcond_with tests
 %bcond_with python3
 %else
@@ -20,7 +20,7 @@
 
 Name:           python-%{srcname}
 Version:        1.5.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 License:        MIT and Public Domain
 #               main package: MIT, except: doc/style.css: Public Domain
@@ -204,6 +204,9 @@ popd
 
 
 %changelog
+* Wed May 30 2018 Alfredo Moralejo <amoralej@redhat.com> - 1.5.3-2
+- Disable python3 and unit tests for RHEL7 builds.
+
 * Thu Mar 22 2018 Thomas Moschny <thomas.moschny@gmx.de> - 1.5.3-1
 - Update to 1.5.3.
 
